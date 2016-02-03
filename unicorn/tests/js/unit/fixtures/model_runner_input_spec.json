@@ -1,0 +1,7 @@
+{
+  "rowOffset": 1,
+  "fileName": "fixtures/file.csv",
+  "timestampIndex": 0,
+  "valueIndex": 1,
+  "datetimeFormat": "%Y-%m-%d %H:%M:%S"
+}
