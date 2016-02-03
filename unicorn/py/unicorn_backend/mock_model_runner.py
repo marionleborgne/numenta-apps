@@ -19,13 +19,7 @@
 #
 # http://numenta.org/licenses/
 # ----------------------------------------------------------------------
-"""
-Send mock data to ModelRunner by running:
 
-$ python mock_data_generator.py | python model_runner.py 
-  --model "1" --stats '{"max": 10, "min": 0}' 
-
-"""
 import json
 import sys
 
