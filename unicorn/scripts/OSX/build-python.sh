@@ -32,8 +32,13 @@ OSX_VERSION=$(sw_vers -productVersion | awk -F '.' '{print $1 "." $2}')
 echo "==> System version: $OSX_VERSION"
 PYTHON_SH="Miniconda-latest-MacOSX-x86_64.sh"
 CAPNP="capnproto-c++-0.5.3"
-NUPIC_CORE=${PWD}/nupic.core
-NUPIC=${PWD}/nupic
+
+NUPIC_CORE_VERSION=0.2.7
+NUPIC_CORE=${PWD}/nupic.core-${NUPIC_CORE_VERSION}
+
+NUPIC_VERSION=0.3.6
+NUPIC=${PWD}/nupic-${NUPIC_VERSION}
+
 PREFIX=${PWD}/miniconda
 PATH_VALUE=${PREFIX}/bin:${PREFIX}/include
 
@@ -79,8 +84,11 @@ pushd $CAPNP
 make -j6 check && make install
 popd
 
-echo "==> Cloning nupic.core ..."
-git clone https://github.com/numenta/nupic.core.git
+echo "==> Downloading nupic.core $NUPIC_CORE_VERSION ..."
+pushd $PREFIX
+wget https://github.com/numenta/nupic.core/archive/${NUPIC_CORE_VERSION}.zip
+unzip nupic.core-${NUPIC_CORE_VERSION}.zip
+popd 
 
 echo "==> Installing nupic.core requirements ..."
 rm -rf $NUPIC_CORE/build
@@ -108,8 +116,11 @@ export ARCHFLAGS="-arch x86_64"
 $PREFIX/bin/python setup.py install
 popd
 
-echo "==> Cloning nupic ..."
-git clone https://github.com/numenta/nupic.git
+echo "==> Downloading nupic $NUPIC_VERSION ..."
+pushd $PREFIX
+wget https://github.com/numenta/nupic/archive/${NUPIC_VERSION}.zip
+unzip nupic-${NUPIC_VERSION}.zip
+popd 
 
 echo "==> Installing nupic ..."
 pushd $NUPIC
