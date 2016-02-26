@@ -31,13 +31,16 @@ import os
 import pkg_resources
 import sys
 import traceback
+import validictory
 
 from dateutil import tz
-import validictory
+
+# Add numenta-apps/unicorn/py to the path
+py_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(py_dir)
 
 from unicorn_backend.param_finder import findParameters
 from unicorn_backend.param_finder import MAX_NUM_ROWS
-
 from unicorn_backend import date_time_utils
 
 g_log = logging.getLogger(__name__)

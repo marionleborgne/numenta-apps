@@ -41,7 +41,6 @@ import os
 import pkg_resources
 import sys
 import traceback
-
 import validictory
 
 from nupic.algorithms.anomaly_likelihood import AnomalyLikelihood
@@ -49,6 +48,10 @@ from nupic.data import aggregator
 from nupic.data import fieldmeta
 from nupic.data import record_stream
 from nupic.frameworks.opf.modelfactory import ModelFactory
+
+# Add numenta-apps/unicorn/py to the path
+py_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(py_dir)
 
 from unicorn_backend import date_time_utils
 
