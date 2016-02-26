@@ -37,7 +37,7 @@ from dateutil import tz
 
 # Add numenta-apps/unicorn/py to the path
 py_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-sys.path.append(py_dir)
+sys.path.insert(0, py_dir)
 
 from unicorn_backend.param_finder import findParameters
 from unicorn_backend.param_finder import MAX_NUM_ROWS
