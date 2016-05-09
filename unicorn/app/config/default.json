@@ -46,7 +46,8 @@
         "path": "Untitled.csv"
       },
       "summary": {
-        "title": "Anomaly results summary"
+        "title": "Anomaly results summary",
+        "more": "More"
       }
     }
   },

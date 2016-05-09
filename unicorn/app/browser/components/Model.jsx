@@ -31,6 +31,9 @@ import RaisedButton from 'material-ui/lib/raised-button';
 import React from 'react';
 import {remote} from 'electron';
 import Snackbar from 'material-ui/lib/snackbar';
+import IconButton from 'material-ui/lib/icon-button';
+import IconClose from 'material-ui/lib/svg-icons/hardware/keyboard-arrow-down';
+import IconOpen from 'material-ui/lib/svg-icons/hardware/keyboard-arrow-up';
 
 import ChartUpdateViewpoint from '../actions/ChartUpdateViewpoint';
 import CreateModelDialog from './CreateModelDialog'
@@ -89,6 +92,7 @@ export default class Model extends React.Component {
 
     // init state
     this.state = {
+      showMore: false,
       modalDialog: null,
       showSnackbar: false,
       snackbarMessage: '',
@@ -149,7 +153,23 @@ export default class Model extends React.Component {
         },
         anomaly: {
           verticalAlign: 'top'
+        },
+        moreButton: {
+          display: 'inline-block',
+          verticalAlign: 'middle',
+          color: muiTheme.rawTheme.palette.primary1Color,
+          fontSize: 13,
+          fontWeight: muiTheme.rawTheme.font.weight.normal,
+          textTransform: 'none'
+        },
+        toggle: {
+          padding: '12px 0',
+          width: '30px'
+        },
+        toggleIcon: {
+          fill: muiTheme.rawTheme.palette.primary1Color
         }
+
       },
       progress: {
         // marginTop: '-5rem',
@@ -258,8 +278,38 @@ export default class Model extends React.Component {
     });
   }
 
+
+  _handleShowMore() {
+    console.log('show more before ',this.state.showMore);
+    this.setState({showMore: !this.state.showMore});
+    console.log('show more after ', this.state.showMore);
+    this._showModelSummaryDialog();
+  }
+
   _renderModelSummaryDialog() {
-    let {model, file, modelData} = this.props;
+    let {model, file, valueField, modelData} = this.props;
+    let encoders = valueField.model_options.modelConfig.modelParams.sensorParams.encoders;
+    let aggOpts = valueField.aggregation_options;
+
+
+    // More info section
+    let recognizeWeeklyPatterns = Boolean(encoders.c0_timeOfWeek);
+    let recognizeDailyPatterns = Boolean(encoders.c0_timeOfDay);
+    let aggregation = Boolean(aggOpts);
+
+    let MoreSection;
+    if (this.state.showMore) {
+      MoreSection = (<div>
+        <strong>HTM advanced settings</strong>
+        <ul>
+          <li> aggregation: {aggregation}</li>
+          <li> Recognize daily patterns: {recognizeDailyPatterns}</li>
+          <li> Recognize weekly patterns: {recognizeWeeklyPatterns}</li>
+        </ul>
+      </div>);
+    } else {
+      MoreSection = (<div></div>);
+    }
 
     let total = modelData.data.reduce((previous, data) => {
       let {red, yellow} = previous;
@@ -310,16 +360,47 @@ export default class Model extends React.Component {
           <li>Engage with a more scalable HTM project in the NuPIC community or
               contact us for a license</li>
         </ol>
+        {MoreSection}
       </div>
     );
   }
 
   _showModelSummaryDialog() {
-    let actions = [<RaisedButton
-                      label={this._config.get('button:okay')}
-                      onTouchTap={this._dismissModalDialog.bind(this)}
-                      primary={true}/>
-                  ];
+
+    let toggleIcon;
+
+    // choose file visibility toggle icon
+    if (this.state.showMore) {
+      toggleIcon = (<IconOpen />);
+    } else {
+      toggleIcon = (<IconClose />);
+    }
+
+    let actions = [];
+
+    // add the more info button
+    actions.push(
+      <FlatButton
+        label={this._config.get('dialog:model:summary:more')}
+        onTouchTap={this._handleShowMore.bind(this)}
+        linkButton={true}
+        secondary={true}
+        style={this._styles.summary.moreButton}
+        icon={<IconButton style={this._styles.summary.toggle}
+                      iconStyle={this._styles.summary.toggleIcon}
+          >
+          {toggleIcon}
+          </IconButton>}
+      />
+    );
+
+    actions.push(<RaisedButton
+      label={this._config.get('button:okay')}
+      onTouchTap={this._dismissModalDialog.bind(this)}
+      primary={true}/>
+    );
+
+
     let body = this._renderModelSummaryDialog();
     let title = this._config.get('dialog:model:summary:title');
     this._showModalDialog(title, body, actions);
