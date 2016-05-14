@@ -64,7 +64,7 @@ export default class Chart extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this._scrollLock = true;
+    this._jumpToNewResults = true;
     this._config = this.context.getConfigClient();
 
     // DyGraphs chart container
@@ -167,7 +167,7 @@ export default class Chart extends React.Component {
     let {model} = metaData;
     let [rangeMin, rangeMax] = this._chartRange;
 
-    if (model.active && this._scrollLock) {
+    if (model.active && this._jumpToNewResults) {
       let rangeWidth = rangeMax - rangeMin;
       if (model.aggregated) {
         rangeMax = data[data.length - 1][DATA_INDEX_TIME].getTime();
@@ -192,7 +192,10 @@ export default class Chart extends React.Component {
    */
   _handleMouseDown(event) {
     if (!this._dygraph) return;
-    this._scrollLock = false;
+
+    if (this.props.metaData.model.active) {
+      this._jumpToNewResults = false;
+    }
 
     let eventX = this._dygraph.eventToDomCoords(event)[0];
     let {w: canvasWidth} = this._dygraph.getArea();
@@ -232,7 +235,6 @@ export default class Chart extends React.Component {
    */
   _handleMouseUp(event) {
     if (!this._dygraph) return;
-    this._scrollLock = false;
     let range = this._dygraph.xAxisRange();
     this._chartRange = range;
 
