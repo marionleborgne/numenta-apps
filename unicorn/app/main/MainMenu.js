@@ -19,16 +19,20 @@
  * Main top system menu (File/Open.., etc) for application
  */
 
-const electron = require('electron');
-const name = electron.app.getName();
+import config from './ConfigService';
+
+let electron = require('electron');
+let env = config.get('env');
+
+const APP_NAME = electron.app.getName();
 const VERSION = electron.app.getVersion();
 
 let crossPlatformMenu = [
   {
-    label: name,
+    label: APP_NAME,
     submenu: [
       {
-        label: `About ${name}`,
+        label: `About ${APP_NAME}`,
         click() {
           const BrowserWindow = electron.BrowserWindow;
           let win = new BrowserWindow({width: 283, height: 230, title: ''});
@@ -86,10 +90,23 @@ let crossPlatformMenu = [
   }
 ];
 
+if (env === 'dev') {
+  let viewMenu = crossPlatformMenu.find((item) => item.label === 'View');
+  if (viewMenu) {
+    viewMenu.submenu.push({
+      label: 'Toggle Developer Tools',
+      accelerator: process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I', // eslint-disable-line
+      click(item, focusedWindow) {
+        if (focusedWindow)
+          focusedWindow.webContents.toggleDevTools();
+      }
+    });
+  }
+}
 
 if (process.platform === 'darwin') {
 
-  let aboutMenu = crossPlatformMenu.find((item) => item.label === name);
+  let aboutMenu = crossPlatformMenu.find((item) => item.label === APP_NAME);
 
   aboutMenu.submenu.push(
     {
@@ -104,7 +121,7 @@ if (process.platform === 'darwin') {
       type: 'separator'
     },
     {
-      label: `Hide ${name}`,
+      label: `Hide ${APP_NAME}`,
       accelerator: 'Command+H',
       role: 'hide'
     },
